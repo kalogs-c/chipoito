@@ -18,6 +18,7 @@ typedef struct {
 typedef struct {
   SDL_Window *window;
   SDL_Renderer *renderer;
+  bool is_running;
 } SDLInstance;
 
 bool START(SDLInstance *sdl, const MonitorConfig config) {
@@ -58,8 +59,19 @@ int DESTROY(const SDLInstance *sdl) {
   return EXIT_SUCCESS;
 }
 
+void UPDATE(SDLInstance *sdl) {
+  SDL_Event event;
+  while (SDL_PollEvent(&event)) {
+    switch (event.type) {
+    case SDL_QUIT:
+      sdl->is_running = false;
+      break;
+    }
+  }
+}
+
 int main() {
-  SDLInstance sdl = {};
+  SDLInstance sdl = {.is_running = true};
 
   MonitorConfig config = {"Chipoito", 15};
   if (!START(&sdl, config)) {
@@ -73,10 +85,9 @@ int main() {
 
   SDL_RenderPresent(sdl.renderer);
 
-  // while (true) {
-  // }
-
-  SDL_Delay(500);
+  while (sdl.is_running) {
+    UPDATE(&sdl);
+  }
 
   return DESTROY(&sdl);
 }
