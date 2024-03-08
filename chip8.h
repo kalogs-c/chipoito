@@ -18,4 +18,4 @@ void CHIP8_Destroy(Chip8 *chip8);
 
 void CHIP8_Start(Chip8 *chip8);
 
-#endif // !
+#endif // !CHIP8_H
