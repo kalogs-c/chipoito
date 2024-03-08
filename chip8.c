@@ -1,5 +1,5 @@
 #include "chip8.h"
-#include "./input/input.h"
+#include "input/input.h"
 #include <SDL2/SDL_events.h>
 
 Chip8 *CHIP8_Create(DisplayConfig config) {
