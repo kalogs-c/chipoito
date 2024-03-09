@@ -5,17 +5,23 @@
 
 Display *CHIP8_CreateDisplay(DisplayConfig config) {
   Display *display = malloc(sizeof(Display));
-  if (display == NULL) {
+  if (NULL == display) {
     SDL_Log("ERROR Creating Display: %s\n", SDL_GetError());
+    free(display);
     return NULL;
   }
 
-  SDL_Window *window = SDL_CreateWindow(
-      config.title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-      64 * config.scale, 32 * config.scale, SDL_WINDOW_RESIZABLE);
+  display->columns = 64;
+  display->rows = 32;
 
-  if (window == NULL) {
+  SDL_Window *window =
+      SDL_CreateWindow(config.title, SDL_WINDOWPOS_CENTERED,
+                       SDL_WINDOWPOS_CENTERED, display->columns * config.scale,
+                       display->rows * config.scale, SDL_WINDOW_RESIZABLE);
+
+  if (NULL == window) {
     SDL_Log("ERROR Creating Window: %s\n", SDL_GetError());
+    free(display);
     return NULL;
   }
 
@@ -23,8 +29,9 @@ Display *CHIP8_CreateDisplay(DisplayConfig config) {
       window, -1,
       SDL_RENDERER_PRESENTVSYNC); // It crashes on WSL2 without this flag
 
-  if (renderer == NULL) {
+  if (NULL == renderer) {
     SDL_Log("ERROR Creating Renderer: %s\n", SDL_GetError());
+    free(display);
     return NULL;
   }
 
