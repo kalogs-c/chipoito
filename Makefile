@@ -1,6 +1,7 @@
 CC = gcc
 
-CFLAGS = -g -Wall -Werror -Wextra -std=c99 `sdl2-config --cflags --libs`
+CFLAGS = -g -Wall -Werror -Wextra -std=c99 
+LIBS = `sdl2-config --cflags --libs`
 
 SRCDIR = .
 OBJDIR = obj
@@ -34,7 +35,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 $(TARGET): $(OBJS)
 	@mkdir -p $(BUILDDIR)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 clean:
 	$(RM) -r $(OBJDIR) $(TARGET)
