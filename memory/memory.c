@@ -1,4 +1,5 @@
 #include "memory.h"
+#include <SDL2/SDL_error.h>
 #include <SDL2/SDL_log.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -49,8 +50,8 @@ bool _read_rom(Memory *memory, const char *rom_file_path) {
     return false;
   }
 
-  if (fread(memory->ram + ROM_ENTRY_POINT, 1, file_size, rom) != 1) {
-    SDL_Log("ROM file could not be read\n");
+  if (fread(memory->ram + ROM_ENTRY_POINT, file_size, 1, rom) != 1) {
+    SDL_Log("ROM file could not be read: %s\n", SDL_GetError());
     fclose(rom);
     return false;
   };
