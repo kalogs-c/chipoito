@@ -2,6 +2,7 @@
 #include <SDL2/SDL_log.h>
 #include <SDL2/SDL_render.h>
 #include <stdio.h>
+#include <string.h>
 
 Display *CHIP8_CreateDisplay(DisplayConfig config) {
   Display *display = malloc(sizeof(Display));
@@ -25,9 +26,8 @@ Display *CHIP8_CreateDisplay(DisplayConfig config) {
     return NULL;
   }
 
-  SDL_Renderer *renderer = SDL_CreateRenderer(
-      window, -1,
-      SDL_RENDERER_PRESENTVSYNC); // It crashes on WSL2 without this flag
+  SDL_Renderer *renderer =
+      SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
   if (NULL == renderer) {
     SDL_Log("ERROR Creating Renderer: %s\n", SDL_GetError());
@@ -55,4 +55,8 @@ void CHIP8_ClearDisplay(Display *display) {
   SDL_RenderPresent(display->renderer);
 
   return;
+}
+
+void CHIP8_ClearPixels(Display *display) {
+  memcpy(&display->pixels[0], false, sizeof(display->pixels));
 }

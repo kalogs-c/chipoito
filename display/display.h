@@ -26,4 +26,6 @@ void CHIP8_ClearDisplay(Display *display);
 
 bool CHIP8_SetPixel(Display *display, uint8_t x, uint8_t y);
 
+void CHIP8_ClearPixels(Display *display);
+
 #endif // !DISPLAY_H

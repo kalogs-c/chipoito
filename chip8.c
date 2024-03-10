@@ -51,6 +51,8 @@ void CHIP8_Update(Chip8 *chip8) {
     case PLAY:
       chip8->state = RUNNING;
       return;
+    case CLEAR_SCREEN:
+      CHIP8_ClearPixels(chip8->display);
     case NONE:
       break;
     };

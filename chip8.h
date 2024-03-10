@@ -6,6 +6,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+typedef enum { QUIT, NONE, FREEZE, PLAY, CLEAR_SCREEN } Event;
+
 typedef enum {
   RUNNING,
   STOPPED,

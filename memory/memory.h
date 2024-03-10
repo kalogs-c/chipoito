@@ -12,6 +12,7 @@
 typedef struct {
   uint8_t ram[MEMORY_SIZE];   // 4096 bytes of RAM.
   uint16_t stack[STACK_SIZE]; // 12 levels of stack.
+  uint16_t SP;                // Stack pointer.
   uint8_t V[NUM_REGISTERS];   // 16 8-bit general purpose registers.
   uint16_t I;                 // 16-bit address register.
   uint16_t PC;                // Program counter.

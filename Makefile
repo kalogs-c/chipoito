@@ -12,11 +12,13 @@ ROMDIR = roms
 DISPLAYDIR = display
 INPUTDIR = input
 MEMORYDIR = memory
+INSTRUCTIONDIR = instruction
 
 SRCS = $(wildcard $(SRCDIR)/*.c) \
 	$(wildcard $(DISPLAYDIR)/*.c) \
 	$(wildcard $(INPUTDIR)/*.c) \
-	$(wildcard $(MEMORYDIR)/*.c)
+	$(wildcard $(MEMORYDIR)/*.c) \
+	$(wildcard $(INSTRUCTIONDIR)/*.c)
 
 OBJS = $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 

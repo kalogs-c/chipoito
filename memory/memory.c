@@ -75,5 +75,13 @@ Memory *CHIP8_CreateMemory(const char *rom_file_path) {
     return NULL;
   }
 
+  memory->stack = malloc(sizeof(uint16_t) * STACK_SIZE);
+  if (NULL == memory->stack) {
+    free(memory);
+    return NULL;
+  }
+
+  memory->SP = 0;
+
   return memory;
 }
