@@ -12,6 +12,8 @@ Display *CHIP8_CreateDisplay(DisplayConfig config) {
     return NULL;
   }
 
+  memset(display, 0, sizeof(Display));
+
   display->columns = 64;
   display->rows = 32;
 
@@ -37,6 +39,7 @@ Display *CHIP8_CreateDisplay(DisplayConfig config) {
 
   display->window = window;
   display->renderer = renderer;
+  memset(&display->pixels[0], false, sizeof(display->pixels));
 
   return display;
 }
@@ -54,5 +57,5 @@ void CHIP8_ClearDisplay(Display *display) {
 }
 
 void CHIP8_ClearPixels(Display *display) {
-  memcpy(&display->pixels[0], false, sizeof(display->pixels));
+  memset(&display->pixels[0], false, sizeof(display->pixels));
 }

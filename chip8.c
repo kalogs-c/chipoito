@@ -4,6 +4,7 @@
 #include "memory/memory.h"
 #include <SDL2/SDL_events.h>
 #include <stdlib.h>
+#include <string.h>
 
 Chip8 *CHIP8_Create(DisplayConfig config, const char *rom_file_path) {
   Chip8 *chip8 = malloc(sizeof(Chip8));
@@ -11,6 +12,7 @@ Chip8 *CHIP8_Create(DisplayConfig config, const char *rom_file_path) {
     free(chip8);
     return NULL;
   }
+  memset(chip8, 0, sizeof(Chip8));
 
   Display *display = CHIP8_CreateDisplay(config);
   if (NULL == display) {

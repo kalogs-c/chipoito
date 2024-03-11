@@ -65,6 +65,14 @@ Memory *CHIP8_CreateMemory(const char *rom_file_path) {
     return NULL;
   }
 
+  memset(memory, 0, sizeof(Memory));
+  memset(memory->ram, 0, sizeof(memory->ram));
+  memset(memory->stack, 0, sizeof(memory->stack));
+  memset(memory->V, 0, sizeof(memory->V));
+  memory->I = 0;
+  memory->delay_timer = 0;
+  memory->sound_timer = 0;
+  memory->SP = 0;
   memory->PC = ROM_ENTRY_POINT;
 
   _load_fontset(memory);
@@ -72,8 +80,6 @@ Memory *CHIP8_CreateMemory(const char *rom_file_path) {
     free(memory);
     return NULL;
   }
-
-  memory->SP = 0;
 
   return memory;
 }

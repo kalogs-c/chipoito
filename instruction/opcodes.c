@@ -129,7 +129,9 @@ void CHIP8_0xCxnn(Instruction instruction, Chip8 *chip8) {
 }
 
 void CHIP8_0xDxyn(Instruction instruction, Chip8 *chip8) {
-  uint8_t bytes_per_sprite = instruction.N;
+  // TODO
+  (void)instruction;
+  (void)chip8;
 }
 
 void CHIP8_0xEx__(Instruction instruction, Chip8 *chip8) {
