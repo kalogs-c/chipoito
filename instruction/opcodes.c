@@ -13,7 +13,7 @@ void CHIP8_0x00__(Instruction instruction, Chip8 *chip8) {
   }
 }
 
-void CHIP8_1nnn(Instruction instruction, Chip8 *chip8) {
+void CHIP8_0x1nnn(Instruction instruction, Chip8 *chip8) {
   chip8->memory->PC = instruction.NNN;
 }
 
@@ -128,4 +128,57 @@ void CHIP8_0xCxnn(Instruction instruction, Chip8 *chip8) {
   chip8->memory->V[instruction.X] = (rand() % 0xFF) & instruction.NN;
 }
 
-void CHIP8_0xDxyn(Instruction instruction, Chip8 *chip8) {}
+void CHIP8_0xDxyn(Instruction instruction, Chip8 *chip8) {
+  uint8_t bytes_per_sprite = instruction.N;
+}
+
+void CHIP8_0xEx__(Instruction instruction, Chip8 *chip8) {
+  switch (instruction.NN) {
+  case 0x9E:
+    if (chip8->keypad[chip8->memory->V[instruction.X]]) {
+      chip8->memory->PC += 2;
+    }
+    break;
+  case 0xA1:
+    if (!chip8->keypad[chip8->memory->V[instruction.X]]) {
+      chip8->memory->PC += 2;
+    }
+    break;
+  }
+}
+
+void CHIP8_0xFx__(Instruction instruction, Chip8 *chip8) {
+  switch (instruction.NN) {
+  case 0x07:
+    chip8->memory->V[instruction.X] = chip8->memory->delay_timer;
+    break;
+  case 0x0A:
+    // TODO
+    break;
+  case 0x15:
+    chip8->memory->delay_timer = chip8->memory->V[instruction.X];
+    break;
+  case 0x18:
+    chip8->memory->sound_timer = chip8->memory->V[instruction.X];
+    break;
+  case 0x1E:
+    chip8->memory->I += chip8->memory->V[instruction.X];
+    break;
+  case 0x29:
+    // TODO
+    break;
+  case 0x33: {
+    uint8_t value = chip8->memory->V[instruction.X];
+    chip8->memory->ram[chip8->memory->I] = value / 100;
+    chip8->memory->ram[chip8->memory->I + 1] = (value / 10) % 10;
+    chip8->memory->ram[chip8->memory->I + 2] = value % 10;
+    break;
+  }
+  case 0x55:
+    // TODO
+    break;
+  case 0x65:
+    // TODO
+    break;
+  }
+}

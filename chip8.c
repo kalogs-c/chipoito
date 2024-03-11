@@ -1,5 +1,6 @@
 #include "chip8.h"
 #include "input/input.h"
+#include "instruction/instruction.h"
 #include "memory/memory.h"
 #include <SDL2/SDL_events.h>
 #include <stdlib.h>
@@ -33,11 +34,9 @@ Chip8 *CHIP8_Create(DisplayConfig config, const char *rom_file_path) {
 void CHIP8_Destroy(Chip8 *chip8) {
   CHIP8_DestroyDisplay(chip8->display);
   free(chip8);
-
-  return;
 };
 
-void CHIP8_Update(Chip8 *chip8) {
+void CHIP8_HandleInput(Chip8 *chip8) {
   SDL_Event event;
 
   while (SDL_PollEvent(&event)) {
@@ -63,11 +62,11 @@ void CHIP8_Start(Chip8 *chip8) {
   CHIP8_ClearDisplay(chip8->display);
 
   while (chip8->state != STOPPED) {
-    CHIP8_Update(chip8);
+    CHIP8_HandleInput(chip8);
 
     if (chip8->state == PAUSED)
       continue;
-  }
 
-  return;
+    CHIP8_EmulateInstruction(chip8);
+  }
 }

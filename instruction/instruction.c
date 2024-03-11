@@ -28,7 +28,7 @@ void CHIP8_EmulateInstruction(Chip8 *chip8) {
     CHIP8_0x00__(instruction, chip8);
     break;
   case 0x1000:
-    CHIP8_1nnn(instruction, chip8);
+    CHIP8_0x1nnn(instruction, chip8);
     break;
   case 0x2000:
     CHIP8_0x2nnn(instruction, chip8);

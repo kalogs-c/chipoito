@@ -28,8 +28,6 @@ void _load_fontset(Memory *memory) {
   };
 
   memcpy(memory->ram, chip8_fontset, sizeof(chip8_fontset));
-
-  return;
 }
 
 bool _read_rom(Memory *memory, const char *rom_file_path) {
@@ -71,12 +69,6 @@ Memory *CHIP8_CreateMemory(const char *rom_file_path) {
 
   _load_fontset(memory);
   if (!_read_rom(memory, rom_file_path)) {
-    free(memory);
-    return NULL;
-  }
-
-  memory->stack = malloc(sizeof(uint16_t) * STACK_SIZE);
-  if (NULL == memory->stack) {
     free(memory);
     return NULL;
   }

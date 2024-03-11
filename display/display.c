@@ -45,16 +45,12 @@ void CHIP8_DestroyDisplay(Display *display) {
   SDL_DestroyRenderer(display->renderer);
   SDL_DestroyWindow(display->window);
   free(display);
-
-  return;
 }
 
 void CHIP8_ClearDisplay(Display *display) {
   SDL_SetRenderDrawColor(display->renderer, 0, 0, 0, 255);
   SDL_RenderClear(display->renderer);
   SDL_RenderPresent(display->renderer);
-
-  return;
 }
 
 void CHIP8_ClearPixels(Display *display) {
