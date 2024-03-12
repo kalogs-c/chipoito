@@ -35,6 +35,7 @@ Chip8 *CHIP8_Create(DisplayConfig config, const char *rom_file_path) {
 
 void CHIP8_Destroy(Chip8 *chip8) {
   CHIP8_DestroyDisplay(chip8->display);
+  CHIP8_DestroyMemory(chip8->memory);
   free(chip8);
 };
 

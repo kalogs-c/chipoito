@@ -1,51 +1,67 @@
 #include "opcodes.h"
 #include "instruction.h"
+#include <SDL2/SDL_log.h>
 #include <stdint.h>
 
 void CHIP8_0x00__(Instruction instruction, Chip8 *chip8) {
   switch (instruction.opcode) {
   case 0x00E0:
+    SDL_Log("Instruction 0x00E0: Clear Screen");
     CHIP8_ClearPixels(chip8->display);
     break;
   case 0x00EE:
+    SDL_Log("Instruction 0x00EE: Return from subroutine");
     chip8->memory->PC = chip8->memory->stack[chip8->memory->SP];
     break;
   }
 }
 
 void CHIP8_0x1nnn(Instruction instruction, Chip8 *chip8) {
+  SDL_Log("Instruction 0x1nnn: Jump to address NNN (0x%04X)", instruction.NNN);
   chip8->memory->PC = instruction.NNN;
 }
 
 void CHIP8_0x2nnn(Instruction instruction, Chip8 *chip8) {
+  SDL_Log("Instruction 0x2nnn: Call subroutine at NNN (0x%04X)",
+          instruction.NNN);
   chip8->memory->SP++;
   chip8->memory->stack[chip8->memory->SP] = chip8->memory->PC;
   chip8->memory->PC = instruction.NNN;
 }
 
 void CHIP8_0x3xnn(Instruction instruction, Chip8 *chip8) {
+  SDL_Log("Instruction 0x3xnn: Skip next instruction if Vx (%X) == NN (0x%02X)",
+          instruction.X, instruction.NN);
   if (chip8->memory->V[instruction.X] == instruction.NN) {
     chip8->memory->PC += 2;
   }
 }
 
 void CHIP8_0x4xnn(Instruction instruction, Chip8 *chip8) {
+  SDL_Log("Instruction 0x4xnn: Skip next instruction if Vx (%X) != NN (0x%02X)",
+          instruction.X, instruction.NN);
   if (chip8->memory->V[instruction.X] != instruction.NN) {
     chip8->memory->PC += 2;
   }
 }
 
 void CHIP8_0x5xy0(Instruction instruction, Chip8 *chip8) {
+  SDL_Log("Instruction 0x5xy0: Skip next instruction if Vx (%X) == Vy (%X)",
+          instruction.X, instruction.Y);
   if (chip8->memory->V[instruction.X] == chip8->memory->V[instruction.Y]) {
     chip8->memory->PC += 2;
   }
 }
 
 void CHIP8_0x6xnn(Instruction instruction, Chip8 *chip8) {
+  SDL_Log("Instruction 0x6xnn: Set Vx (%X) to NN (0x%02X)", instruction.X,
+          instruction.NN);
   chip8->memory->V[instruction.X] = instruction.NN;
 }
 
 void CHIP8_0x7xnn(Instruction instruction, Chip8 *chip8) {
+  SDL_Log("Instruction 0x7xnn: Set Vx (%X) to NN (0x%02X) + Vx (%X)",
+          instruction.X, instruction.NN, instruction.X);
   chip8->memory->V[instruction.X] += instruction.NN;
 }
 

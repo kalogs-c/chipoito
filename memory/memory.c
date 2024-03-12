@@ -83,3 +83,5 @@ Memory *CHIP8_CreateMemory(const char *rom_file_path) {
 
   return memory;
 }
+
+void CHIP8_DestroyMemory(Memory *memory) { free(memory); }
