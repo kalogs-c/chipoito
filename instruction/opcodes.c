@@ -31,7 +31,7 @@ void CHIP8_0x2nnn(Instruction instruction, Chip8 *chip8) {
 
 void CHIP8_0x3xnn(Instruction instruction, Chip8 *chip8) {
   SDL_Log("Instruction 0x3xnn: Skip next instruction if Vx (%X) == NN (0x%02X)",
-          instruction.X, instruction.NN);
+          chip8->memory->V[instruction.X], instruction.NN);
   if (chip8->memory->V[instruction.X] == instruction.NN) {
     chip8->memory->PC += 2;
   }
@@ -39,7 +39,7 @@ void CHIP8_0x3xnn(Instruction instruction, Chip8 *chip8) {
 
 void CHIP8_0x4xnn(Instruction instruction, Chip8 *chip8) {
   SDL_Log("Instruction 0x4xnn: Skip next instruction if Vx (%X) != NN (0x%02X)",
-          instruction.X, instruction.NN);
+          chip8->memory->V[instruction.X], instruction.NN);
   if (chip8->memory->V[instruction.X] != instruction.NN) {
     chip8->memory->PC += 2;
   }
@@ -47,54 +47,54 @@ void CHIP8_0x4xnn(Instruction instruction, Chip8 *chip8) {
 
 void CHIP8_0x5xy0(Instruction instruction, Chip8 *chip8) {
   SDL_Log("Instruction 0x5xy0: Skip next instruction if Vx (%X) == Vy (%X)",
-          instruction.X, instruction.Y);
+          chip8->memory->V[instruction.X], chip8->memory->V[instruction.Y]);
   if (chip8->memory->V[instruction.X] == chip8->memory->V[instruction.Y]) {
     chip8->memory->PC += 2;
   }
 }
 
 void CHIP8_0x6xnn(Instruction instruction, Chip8 *chip8) {
-  SDL_Log("Instruction 0x6xnn: Set Vx (%X) to NN (0x%02X)", instruction.X,
-          instruction.NN);
+  SDL_Log("Instruction 0x6xnn: Set Vx (0x%X) to NN (0x%02X)",
+          chip8->memory->V[instruction.X], instruction.NN);
   chip8->memory->V[instruction.X] = instruction.NN;
 }
 
 void CHIP8_0x7xnn(Instruction instruction, Chip8 *chip8) {
-  SDL_Log("Instruction 0x7xnn: Set Vx (%X) to NN (0x%02X) + Vx (%X)",
-          instruction.X, instruction.NN, instruction.X);
+  SDL_Log("Instruction 0x7xnn: Set Vx to NN (0x%02X) + Vx (%X)", instruction.NN,
+          chip8->memory->V[instruction.X]);
   chip8->memory->V[instruction.X] += instruction.NN;
 }
 
 void CHIP8_0x8xy_(Instruction instruction, Chip8 *chip8) {
   switch (instruction.N) {
   case 0:
-    SDL_Log("Instruction 0x8xy0: Set Vx (%X) to Vy (%X)", instruction.X,
-            instruction.Y);
+    SDL_Log("Instruction 0x8xy0: Set Vx (%X) to Vy (%X)",
+            chip8->memory->V[instruction.X], chip8->memory->V[instruction.Y]);
     chip8->memory->V[instruction.X] = chip8->memory->V[instruction.Y];
     break;
 
   case 1:
-    SDL_Log("Instruction 0x8xy1: Set Vx (%X) to Vy (%X) OR Vx (%X)",
-            instruction.X, instruction.Y, instruction.X);
+    SDL_Log("Instruction 0x8xy1: Set Vx to Vy (%X) OR Vx (%X)",
+            chip8->memory->V[instruction.Y], chip8->memory->V[instruction.X]);
     chip8->memory->V[instruction.X] |= chip8->memory->V[instruction.Y];
     break;
 
   case 2:
-    SDL_Log("Instruction 0x8xy2: Set Vx (%X) to Vy (%X) AND Vx (%X)",
-            instruction.X, instruction.Y, instruction.X);
+    SDL_Log("Instruction 0x8xy2: Set Vx to Vy (%X) AND Vx (%X)",
+            chip8->memory->V[instruction.Y], chip8->memory->V[instruction.X]);
     chip8->memory->V[instruction.X] &= chip8->memory->V[instruction.Y];
     break;
 
   case 3:
-    SDL_Log("Instruction 0x8xy3: Set Vx (%X) to Vy (%X) XOR Vx (%X)",
-            instruction.X, instruction.Y, instruction.X);
+    SDL_Log("Instruction 0x8xy3: Set Vx to Vy (%X) XOR Vx (%X)",
+            chip8->memory->V[instruction.Y], chip8->memory->V[instruction.X]);
     chip8->memory->V[instruction.X] ^= chip8->memory->V[instruction.Y];
     break;
 
   case 4: {
-    SDL_Log("Instruction 0x8xy4: Set Vx (%X) to the last two bytes of Vy (%X) "
+    SDL_Log("Instruction 0x8xy4: Set Vx to the last two bytes of Vy (%X) "
             "+ Vx (%X) if carry",
-            instruction.X, instruction.Y, instruction.X);
+            chip8->memory->V[instruction.Y], chip8->memory->V[instruction.X]);
     uint16_t carry =
         chip8->memory->V[instruction.X] + chip8->memory->V[instruction.Y];
     if (carry > 0xFF) {
@@ -107,9 +107,9 @@ void CHIP8_0x8xy_(Instruction instruction, Chip8 *chip8) {
   }
 
   case 5:
-    SDL_Log("Instruction 0x8xy5: Set Vx (%X) to Vx (%X) - Vy (%X) and set VF "
+    SDL_Log("Instruction 0x8xy5: Set Vx to Vx (%X) - Vy (%X) and set VF "
             "to 1 if Vx > Vy, otherwise set VF to 0",
-            instruction.X, instruction.X, instruction.Y);
+            chip8->memory->V[instruction.X], chip8->memory->V[instruction.Y]);
     if (chip8->memory->V[instruction.X] > chip8->memory->V[instruction.Y]) {
       chip8->memory->V[0xF] = 1;
     } else {
@@ -119,17 +119,17 @@ void CHIP8_0x8xy_(Instruction instruction, Chip8 *chip8) {
     break;
 
   case 6:
-    SDL_Log("Instruction 0x8xy6: Set Vx (%X) to Vx / 2 and set VF to the last "
+    SDL_Log("Instruction 0x8xy6: Set Vx to Vx / 2 and set VF to the last "
             "bit of Vx (%X)",
-            instruction.X, instruction.X);
+            chip8->memory->V[instruction.X]);
     chip8->memory->V[0xF] = chip8->memory->V[instruction.X] & 0x1;
     chip8->memory->V[instruction.X] >>= 0x1;
     break;
 
   case 7:
-    SDL_Log("Instruction 0x8xy7: Set Vx (%X) to Vy (%X) - Vx (%X) and set VF "
+    SDL_Log("Instruction 0x8xy7: Set Vx to Vy (%X) - Vx (%X) and set VF "
             "to 1 if Vy > Vx, otherwise set VF to 0",
-            instruction.X, instruction.Y, instruction.X);
+            chip8->memory->V[instruction.Y], chip8->memory->V[instruction.X]);
     if (chip8->memory->V[instruction.Y] > chip8->memory->V[instruction.X]) {
       chip8->memory->V[0xF] = 1;
     } else {
@@ -142,7 +142,7 @@ void CHIP8_0x8xy_(Instruction instruction, Chip8 *chip8) {
   case 0xE:
     SDL_Log("Instruction 0x8xyE: Set Vx (%X) to Vx * 2 and set VF to the first "
             "bit of Vx",
-            instruction.X);
+            chip8->memory->V[instruction.X]);
     chip8->memory->V[0xF] = chip8->memory->V[instruction.X] & 0x80;
     chip8->memory->V[instruction.X] <<= 0x1;
     break;
@@ -151,7 +151,7 @@ void CHIP8_0x8xy_(Instruction instruction, Chip8 *chip8) {
 
 void CHIP8_0x9xy0(Instruction instruction, Chip8 *chip8) {
   SDL_Log("Instruction 0x9xy0: Skip next instruction if Vx (%X) != Vy (%X)",
-          instruction.X, instruction.Y);
+          chip8->memory->V[instruction.X], chip8->memory->V[instruction.Y]);
   if (chip8->memory->V[instruction.X] != chip8->memory->V[instruction.Y]) {
     chip8->memory->PC += 2;
   }
@@ -171,7 +171,7 @@ void CHIP8_0xBnnn(Instruction instruction, Chip8 *chip8) {
 void CHIP8_0xCxnn(Instruction instruction, Chip8 *chip8) {
   SDL_Log("Instruction 0xCxnn: Set Vx (%X) to a random number between 0 and "
           "255 AND NN (0x%02X)",
-          instruction.X, instruction.NN);
+          chip8->memory->V[instruction.X], instruction.NN);
   chip8->memory->V[instruction.X] = (rand() % 0xFF) & instruction.NN;
 }
 
@@ -179,7 +179,7 @@ void CHIP8_0xDxyn(Instruction instruction, Chip8 *chip8) {
   // TODO
   (void)chip8;
   SDL_Log("Instruction 0xDxyn: TODO - Would draw a sprite at Vx (%X), Vy (%X)",
-          instruction.X, instruction.Y);
+          chip8->memory->V[instruction.X], chip8->memory->V[instruction.Y]);
 }
 
 void CHIP8_0xEx__(Instruction instruction, Chip8 *chip8) {
@@ -187,7 +187,7 @@ void CHIP8_0xEx__(Instruction instruction, Chip8 *chip8) {
   case 0x9E:
     SDL_Log(
         "Instruction 0xEx9E: Skip next instruction if key Vx (%X) is pressed",
-        instruction.X);
+        chip8->memory->V[instruction.X]);
     if (chip8->keypad[chip8->memory->V[instruction.X]]) {
       chip8->memory->PC += 2;
     }
@@ -195,7 +195,7 @@ void CHIP8_0xEx__(Instruction instruction, Chip8 *chip8) {
   case 0xA1:
     SDL_Log("Instruction 0xExA1: Skip next instruction if key Vx (%X) is not "
             "pressed",
-            instruction.X);
+            chip8->memory->V[instruction.X]);
     if (!chip8->keypad[chip8->memory->V[instruction.X]]) {
       chip8->memory->PC += 2;
     }
@@ -207,7 +207,7 @@ void CHIP8_0xFx__(Instruction instruction, Chip8 *chip8) {
   switch (instruction.NN) {
   case 0x07:
     SDL_Log("Instruction 0xFx07: Set Vx (%X) to the delay timer",
-            instruction.X);
+            chip8->memory->V[instruction.X]);
     chip8->memory->V[instruction.X] = chip8->memory->delay_timer;
     break;
   case 0x0A:
@@ -217,17 +217,18 @@ void CHIP8_0xFx__(Instruction instruction, Chip8 *chip8) {
     break;
   case 0x15:
     SDL_Log("Instruction 0xFx15: Set the delay timer to Vx (%X)",
-            instruction.X);
+            chip8->memory->V[instruction.X]);
     chip8->memory->delay_timer = chip8->memory->V[instruction.X];
     break;
   case 0x18:
     SDL_Log("Instruction 0xFx18: Set the sound timer to Vx (%X)",
-            instruction.X);
+            chip8->memory->V[instruction.X]);
     chip8->memory->sound_timer = chip8->memory->V[instruction.X];
     break;
   case 0x1E:
     SDL_Log("Instruction 0xFx1E: Set I (%X) to I (%X) + Vx (%X)",
-            chip8->memory->I, chip8->memory->I, instruction.X);
+            chip8->memory->I, chip8->memory->I,
+            chip8->memory->V[instruction.X]);
     chip8->memory->I += chip8->memory->V[instruction.X];
     break;
   case 0x29:
@@ -237,7 +238,7 @@ void CHIP8_0xFx__(Instruction instruction, Chip8 *chip8) {
     break;
   case 0x33: {
     SDL_Log("Instruction 0xFx33: Store BCD representation of Vx (%X)",
-            instruction.X);
+            chip8->memory->V[instruction.X]);
     uint8_t value = chip8->memory->V[instruction.X];
     chip8->memory->ram[chip8->memory->I] = value / 100;
     chip8->memory->ram[chip8->memory->I + 1] = (value / 10) % 10;
