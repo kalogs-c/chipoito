@@ -6,7 +6,7 @@
 
 typedef struct {
   uint16_t opcode;
-  uint8_t NNN;
+  uint16_t NNN;
   uint8_t NN;
   uint8_t N;
   uint8_t X;

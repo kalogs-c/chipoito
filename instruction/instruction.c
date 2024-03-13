@@ -2,6 +2,7 @@
 #include "../chip8.h"
 #include "../memory/memory.h"
 #include "opcodes.h"
+#include <SDL2/SDL_log.h>
 #include <stdint.h>
 
 Instruction _mount_intruction(Memory *memory) {
@@ -11,6 +12,7 @@ Instruction _mount_intruction(Memory *memory) {
       (memory->ram[memory->PC] << 8) | memory->ram[memory->PC + 1];
   memory->PC += 2;
 
+  SDL_Log("Opcode: 0x%04X", instruction.opcode);
   instruction.X = (instruction.opcode & 0x0F00) >> 8;
   instruction.Y = (instruction.opcode & 0x00F0) >> 4;
   instruction.N = (instruction.opcode & 0x000F);

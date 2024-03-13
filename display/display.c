@@ -16,8 +16,8 @@ Display *CHIP8_CreateDisplay(DisplayConfig config) {
 
   memset(display, 0, sizeof(Display));
 
-  display->columns = DISPLAY_COLUMNS * config.scale;
-  display->rows = DISPLAY_ROWS * config.scale;
+  display->columns = DISPLAY_WIDTH * config.scale;
+  display->rows = DISPLAY_HEIGHT * config.scale;
   display->scale = config.scale;
 
   SDL_Window *window = SDL_CreateWindow(
@@ -66,8 +66,8 @@ void CHIP8_UpdateDisplay(Display display) {
   SDL_Rect rectangle = {0, 0, display.scale, display.scale};
 
   for (uint16_t row = 0; row < sizeof display.pixels; row++) {
-    rectangle.x = row % display.rows;
-    rectangle.y = row / display.rows;
+    rectangle.x = (row % DISPLAY_WIDTH) * display.scale;
+    rectangle.y = (row / DISPLAY_WIDTH) * display.scale;
 
     const bool pixel = display.pixels[row];
     if (pixel) {

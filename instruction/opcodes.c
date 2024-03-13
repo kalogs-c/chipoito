@@ -11,7 +11,7 @@ void CHIP8_0x00__(Instruction instruction, Chip8 *chip8) {
     break;
   case 0x00EE:
     SDL_Log("Instruction 0x00EE: Return from subroutine");
-    chip8->memory->PC = chip8->memory->stack[chip8->memory->SP];
+    chip8->memory->PC = chip8->memory->stack[--chip8->memory->SP];
     break;
   }
 }
@@ -46,6 +46,10 @@ void CHIP8_0x4xnn(Instruction instruction, Chip8 *chip8) {
 }
 
 void CHIP8_0x5xy0(Instruction instruction, Chip8 *chip8) {
+  if (instruction.N == 0) {
+    return;
+  }
+
   SDL_Log("Instruction 0x5xy0: Skip next instruction if Vx (%X) == Vy (%X)",
           chip8->memory->V[instruction.X], chip8->memory->V[instruction.Y]);
   if (chip8->memory->V[instruction.X] == chip8->memory->V[instruction.Y]) {
@@ -178,8 +182,8 @@ void CHIP8_0xCxnn(Instruction instruction, Chip8 *chip8) {
 void CHIP8_0xDxyn(Instruction instruction, Chip8 *chip8) {
   SDL_Log("Instruction 0xDxyn: TODO - Would draw a sprite at Vx (%X), Vy (%X)",
           chip8->memory->V[instruction.X], chip8->memory->V[instruction.Y]);
-  uint8_t x = chip8->memory->V[instruction.X] % DISPLAY_ROWS;
-  uint8_t y = chip8->memory->V[instruction.Y] % DISPLAY_COLUMNS;
+  uint8_t x = chip8->memory->V[instruction.X] % DISPLAY_WIDTH;
+  uint8_t y = chip8->memory->V[instruction.Y] % DISPLAY_HEIGHT;
 
   const uint8_t initial_x = x;
 
@@ -189,9 +193,9 @@ void CHIP8_0xDxyn(Instruction instruction, Chip8 *chip8) {
     uint8_t sprite = chip8->memory->ram[chip8->memory->I + row];
     x = initial_x;
 
-    for (uint8_t column = 7; column > 0; column--) {
-      bool *pixel = &chip8->display->pixels[y * DISPLAY_ROWS + x];
-      const bool mask = sprite & (1 << column);
+    for (int8_t column = 7; column >= 0; column--) {
+      bool *pixel = &chip8->display->pixels[y * DISPLAY_WIDTH + x];
+      const bool mask = (sprite & (1 << column));
 
       if (mask && *pixel) {
         chip8->memory->V[0xF] = 1;
@@ -200,13 +204,13 @@ void CHIP8_0xDxyn(Instruction instruction, Chip8 *chip8) {
       *pixel ^= mask;
 
       x += 1;
-      if (x >= DISPLAY_ROWS) {
+      if (x >= DISPLAY_WIDTH) {
         break;
       }
     }
 
     y += 1;
-    if (y >= DISPLAY_COLUMNS) {
+    if (y >= DISPLAY_HEIGHT) {
       break;
     }
   }

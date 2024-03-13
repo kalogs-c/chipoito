@@ -6,8 +6,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define DISPLAY_ROWS 32
-#define DISPLAY_COLUMNS 64
+#define DISPLAY_HEIGHT 32
+#define DISPLAY_WIDTH 64
 
 typedef struct {
   SDL_Window *window;
@@ -15,8 +15,8 @@ typedef struct {
   uint8_t scale;
   uint32_t columns;
   uint32_t rows;
-  bool pixels[DISPLAY_COLUMNS *
-              DISPLAY_ROWS]; // 64x32 pixels (The original resolution of CHIP-8)
+  bool pixels[DISPLAY_WIDTH * DISPLAY_HEIGHT]; // 64x32 pixels (The original
+                                               // resolution of CHIP-8)
 } Display;
 
 typedef struct {

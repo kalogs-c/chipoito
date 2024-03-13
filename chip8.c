@@ -1,4 +1,5 @@
 #include "chip8.h"
+#include "display/display.h"
 #include "input/input.h"
 #include "instruction/instruction.h"
 #include "memory/memory.h"
@@ -71,5 +72,6 @@ void CHIP8_Start(Chip8 *chip8) {
       continue;
 
     CHIP8_EmulateInstruction(chip8);
+    CHIP8_UpdateDisplay(*chip8->display);
   }
 }
