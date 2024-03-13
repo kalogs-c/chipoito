@@ -26,11 +26,8 @@ typedef struct {
 
 Display *CHIP8_CreateDisplay(DisplayConfig config);
 void CHIP8_DestroyDisplay(Display *display);
-
 void CHIP8_ClearDisplay(Display *display);
-
-bool CHIP8_SetPixel(Display *display, uint8_t x, uint8_t y);
-
 void CHIP8_ClearPixels(Display *display);
+void CHIP8_UpdateDisplay(Display display);
 
 #endif // !DISPLAY_H
