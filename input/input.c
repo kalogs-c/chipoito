@@ -13,8 +13,6 @@ Event handleKey(SDL_Keycode key, State state) {
 }
 
 Event CHIP8_HandleInputEvent(Chip8 *chip8, SDL_Event event) {
-  (void)chip8;
-
   switch (event.type) {
   case SDL_QUIT:
     return QUIT;

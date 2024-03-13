@@ -1,6 +1,8 @@
 #include "display.h"
 #include <SDL2/SDL_log.h>
+#include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -14,13 +16,13 @@ Display *CHIP8_CreateDisplay(DisplayConfig config) {
 
   memset(display, 0, sizeof(Display));
 
-  display->columns = 64;
-  display->rows = 32;
+  display->columns = DISPLAY_COLUMNS * config.scale;
+  display->rows = DISPLAY_ROWS * config.scale;
+  display->scale = config.scale;
 
-  SDL_Window *window =
-      SDL_CreateWindow(config.title, SDL_WINDOWPOS_CENTERED,
-                       SDL_WINDOWPOS_CENTERED, display->columns * config.scale,
-                       display->rows * config.scale, SDL_WINDOW_RESIZABLE);
+  SDL_Window *window = SDL_CreateWindow(
+      config.title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+      display->columns, display->rows, SDL_WINDOW_RESIZABLE);
 
   if (NULL == window) {
     SDL_Log("ERROR Creating Window: %s\n", SDL_GetError());
@@ -57,5 +59,25 @@ void CHIP8_ClearDisplay(Display *display) {
 }
 
 void CHIP8_ClearPixels(Display *display) {
-  memset(&display->pixels[0], false, sizeof(display->pixels));
+  memset(&display->pixels[0], false, sizeof display->pixels);
+}
+
+void CHIP8_UpdateDisplay(Display display) {
+  SDL_Rect rectangle = {0, 0, display.scale, display.scale};
+
+  for (uint16_t row = 0; row < sizeof display.pixels; row++) {
+    rectangle.x = row % display.rows;
+    rectangle.y = row / display.rows;
+
+    const bool pixel = display.pixels[row];
+    if (pixel) {
+      SDL_SetRenderDrawColor(display.renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+      SDL_RenderFillRect(display.renderer, &rectangle);
+    } else {
+      SDL_SetRenderDrawColor(display.renderer, 0x00, 0x00, 0x00, 0xFF);
+      SDL_RenderFillRect(display.renderer, &rectangle);
+    }
+  }
+
+  SDL_RenderPresent(display.renderer);
 }

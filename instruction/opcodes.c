@@ -176,10 +176,40 @@ void CHIP8_0xCxnn(Instruction instruction, Chip8 *chip8) {
 }
 
 void CHIP8_0xDxyn(Instruction instruction, Chip8 *chip8) {
-  // TODO
-  (void)chip8;
   SDL_Log("Instruction 0xDxyn: TODO - Would draw a sprite at Vx (%X), Vy (%X)",
           chip8->memory->V[instruction.X], chip8->memory->V[instruction.Y]);
+  uint8_t x = chip8->memory->V[instruction.X] % DISPLAY_ROWS;
+  uint8_t y = chip8->memory->V[instruction.Y] % DISPLAY_COLUMNS;
+
+  const uint8_t initial_x = x;
+
+  chip8->memory->V[0xF] = 0;
+
+  for (uint8_t row = 0; row < instruction.N; row++) {
+    uint8_t sprite = chip8->memory->ram[chip8->memory->I + row];
+    x = initial_x;
+
+    for (uint8_t column = 7; column > 0; column--) {
+      bool *pixel = &chip8->display->pixels[y * DISPLAY_ROWS + x];
+      const bool mask = sprite & (1 << column);
+
+      if (mask && *pixel) {
+        chip8->memory->V[0xF] = 1;
+      }
+
+      *pixel ^= mask;
+
+      x += 1;
+      if (x >= DISPLAY_ROWS) {
+        break;
+      }
+    }
+
+    y += 1;
+    if (y >= DISPLAY_COLUMNS) {
+      break;
+    }
+  }
 }
 
 void CHIP8_0xEx__(Instruction instruction, Chip8 *chip8) {
