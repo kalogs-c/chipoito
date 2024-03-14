@@ -29,7 +29,19 @@ TARGET = ./$(BUILDDIR)/chip8_emulator
 all: $(TARGET)
 
 logo: all
-	$(TARGET) $(ROMDIR)/IBM_Logo.ch8
+	$(TARGET) $(ROMDIR)/Logo.ch8
+
+test: all
+	$(TARGET) $(ROMDIR)/Test.ch8
+
+tetris: all
+	$(TARGET) $(ROMDIR)/Tetris.ch8
+
+pong: all
+	$(TARGET) $(ROMDIR)/Pong.ch8
+
+clock: all
+	$(TARGET) $(ROMDIR)/Clock.ch8
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(@D)

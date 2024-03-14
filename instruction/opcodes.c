@@ -176,7 +176,7 @@ void CHIP8_0xCxnn(Instruction instruction, Chip8 *chip8) {
   SDL_Log("Instruction 0xCxnn: Set Vx (%X) to a random number between 0 and "
           "255 AND NN (0x%02X)",
           chip8->memory->V[instruction.X], instruction.NN);
-  chip8->memory->V[instruction.X] = (rand() % 0xFF) & instruction.NN;
+  chip8->memory->V[instruction.X] = (rand() % 0x100) & instruction.NN;
 }
 
 void CHIP8_0xDxyn(Instruction instruction, Chip8 *chip8) {
