@@ -1,7 +1,6 @@
-#ifndef INSTRUCTION_H
-#define INSTRUCTION_H
+#pragma once
 
-#include "../chip8.h"
+#include "chip8.h"
 #include <stdint.h>
 
 typedef struct {
@@ -13,6 +12,4 @@ typedef struct {
   uint8_t Y;
 } Instruction;
 
-void CHIP8_EmulateInstruction(Chip8 *chip8);
-
-#endif // !INSTRUCTION_H
+void Chip8_EmulateInstruction(Chip8 *chip8);

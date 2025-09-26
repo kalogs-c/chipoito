@@ -1,55 +1,46 @@
-CC = gcc
+CC = clang
 
-CFLAGS = -g -Wall -Werror -Wextra -std=c99 
+CFLAGS = -g -Wall -Werror -Wextra
 LIBS = `sdl2-config --cflags --libs`
 
-SRCDIR = .
-OBJDIR = obj
-BUILDDIR = bin
+SRC_DIR = src
+BUILD_DIR = .build
+ROMS_DIR = roms
 
-ROMDIR = roms
+SRCS = $(wildcard $(SRC_DIR)/*.c)
+OBJS = $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+DEPS = $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.d)
 
-DISPLAYDIR = display
-INPUTDIR = input
-MEMORYDIR = memory
-INSTRUCTIONDIR = instruction
-
-SRCS = $(wildcard $(SRCDIR)/*.c) \
-	$(wildcard $(DISPLAYDIR)/*.c) \
-	$(wildcard $(INPUTDIR)/*.c) \
-	$(wildcard $(MEMORYDIR)/*.c) \
-	$(wildcard $(INSTRUCTIONDIR)/*.c)
-
-OBJS = $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
-
-TARGET = ./$(BUILDDIR)/chip8_emulator
+TARGET = ./$(BUILD_DIR)/chip8_emulator
 
 .PHONY: all clean
 
 all: $(TARGET)
 
 logo: all
-	$(TARGET) $(ROMDIR)/Logo.ch8
+	$(TARGET) $(ROMS_DIR)/Logo.ch8
 
 test: all
-	$(TARGET) $(ROMDIR)/Test.ch8
+	$(TARGET) $(ROMS_DIR)/Test.ch8
 
 tetris: all
-	$(TARGET) $(ROMDIR)/Tetris.ch8
+	$(TARGET) $(ROMS_DIR)/Tetris.ch8
 
 pong: all
-	$(TARGET) $(ROMDIR)/Pong.ch8
+	$(TARGET) $(ROMS_DIR)/Pong.ch8
 
 clock: all
-	$(TARGET) $(ROMDIR)/Clock.ch8
+	$(TARGET) $(ROMS_DIR)/Clock.ch8
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -MMD -c $< -o $@
+
+-include $(DEPS)
 
 $(TARGET): $(OBJS)
-	@mkdir -p $(BUILDDIR)
+	@mkdir -p $(BUILD_DIR)
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 clean:
-	$(RM) -r $(OBJDIR) $(TARGET)
+	$(RM) -r $(OBJS) $(DEPS) $(TARGET)
