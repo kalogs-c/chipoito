@@ -28,7 +28,7 @@ Display Chip8_CreateDisplay(const char* title, const int8_t scale) {
     }
 
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if (NULL == renderer) {
+    if (renderer == NULL) {
         SDL_Log("ERROR Creating Renderer: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
@@ -48,7 +48,6 @@ void Chip8_DestroyDisplay(const Display* display) {
 void Chip8_ClearDisplay(const Display* display) {
     SDL_SetRenderDrawColor(display->renderer, 0, 0, 0, 255);
     SDL_RenderClear(display->renderer);
-    SDL_RenderPresent(display->renderer);
 }
 
 void Chip8_ClearPixels(Display* display) {
@@ -56,20 +55,18 @@ void Chip8_ClearPixels(Display* display) {
 }
 
 void Chip8_UpdateDisplay(const Display* display) {
+    Chip8_ClearDisplay(display);
     SDL_Rect rectangle = {0, 0, display->scale, display->scale};
 
     for (int32_t row = 0; row < (DISPLAY_HEIGHT * DISPLAY_WIDTH); row++) {
+        SDL_SetRenderDrawColor(display->renderer, 0xFA, 0xFF, 0xFF, 0xFF);
+        SDL_RenderFillRect(display->renderer, &rectangle);
+        if (!display->pixels[row]) continue;
+
         rectangle.x = (row % DISPLAY_WIDTH) * display->scale;
         rectangle.y = (row / DISPLAY_WIDTH) * display->scale;
-
-        const bool pixel = display->pixels[row];
-        if (pixel) {
-            SDL_SetRenderDrawColor(display->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-            SDL_RenderFillRect(display->renderer, &rectangle);
-        } else {
-            SDL_SetRenderDrawColor(display->renderer, 0x00, 0x00, 0x00, 0xFF);
-            SDL_RenderFillRect(display->renderer, &rectangle);
-        }
+        SDL_SetRenderDrawColor(display->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_RenderFillRect(display->renderer, &rectangle);
     }
 
     SDL_RenderPresent(display->renderer);

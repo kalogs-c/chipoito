@@ -9,7 +9,8 @@ void Chip8_0x00__(const Instruction instruction, Chip8* chip8) {
             Chip8_ClearPixels(&chip8->display);
             break;
         case 0x00EE:
-            chip8->memory.PC = chip8->memory.stack[--chip8->memory.SP];
+            chip8->memory.SP--;
+            chip8->memory.PC = chip8->memory.stack[chip8->memory.SP];
             break;
         default: break;
     }
@@ -20,8 +21,8 @@ void Chip8_0x1nnn(const Instruction instruction, Chip8* chip8) {
 }
 
 void Chip8_0x2nnn(const Instruction instruction, Chip8* chip8) {
-    chip8->memory.SP++;
     chip8->memory.stack[chip8->memory.SP] = chip8->memory.PC;
+    chip8->memory.SP++;
     chip8->memory.PC = instruction.NNN;
 }
 
@@ -38,7 +39,7 @@ void Chip8_0x4xnn(const Instruction instruction, Chip8* chip8) {
 }
 
 void Chip8_0x5xy0(const Instruction instruction, Chip8* chip8) {
-    if (instruction.N == 0) return;
+    if (instruction.N != 0) return;
 
     if (chip8->memory.V[instruction.X] == chip8->memory.V[instruction.Y]) {
         chip8->memory.PC += 2;
@@ -141,7 +142,7 @@ void Chip8_0xDxyn(const Instruction instruction, Chip8* chip8) {
     chip8->memory.V[0xF] = 0;
 
     for (uint8_t row = 0; row < instruction.N; row++) {
-        uint8_t sprite = chip8->memory.ram[chip8->memory.I + row];
+        const uint8_t sprite = chip8->memory.ram[chip8->memory.I + row];
         x = initial_x;
 
         for (int8_t column = 7; column >= 0; column--) {
@@ -152,7 +153,7 @@ void Chip8_0xDxyn(const Instruction instruction, Chip8* chip8) {
                 chip8->memory.V[0xF] = 1;
             }
 
-            *pixel ^= mask;
+            *pixel ^= (mask != 0);
 
             x += 1;
             if (x >= DISPLAY_WIDTH) {
@@ -165,6 +166,8 @@ void Chip8_0xDxyn(const Instruction instruction, Chip8* chip8) {
             break;
         }
     }
+
+    chip8->display.redraw = true;
 }
 
 void Chip8_0xEx__(const Instruction instruction, Chip8* chip8) {

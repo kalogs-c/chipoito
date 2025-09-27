@@ -41,15 +41,18 @@ void Chip8_HandleInput(Chip8* chip8) {
 }
 
 void Chip8_Emulate(Chip8* chip8) {
-    Chip8_ClearDisplay(&chip8->display);
+    SDL_RenderPresent(chip8->display.renderer);
 
     while (chip8->state != STOPPED) {
         Chip8_HandleInput(chip8);
-
         if (chip8->state == PAUSED) continue;
 
         Chip8_EmulateInstruction(chip8);
-        Chip8_UpdateDisplay(&chip8->display);
         chip8->memory.PC += 2;
+
+        if (chip8->display.redraw) {
+            Chip8_UpdateDisplay(&chip8->display);
+            chip8->display.redraw = false;
+        }
     }
 }

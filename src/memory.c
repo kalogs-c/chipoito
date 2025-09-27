@@ -8,7 +8,7 @@
 #include <string.h>
 
 void load_font_set(Memory* memory) {
-    const uint8_t chip8_font_set[80] = {
+    const uint8_t font_set[80] = {
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
         0x20, 0x60, 0x20, 0x20, 0x70, // 1
         0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
@@ -27,7 +27,7 @@ void load_font_set(Memory* memory) {
         0xF0, 0x80, 0xF0, 0x80, 0x80, // F
     };
 
-    memcpy(memory->ram, chip8_font_set, sizeof(chip8_font_set));
+    memcpy(memory->ram, font_set, sizeof(font_set));
 }
 
 bool read_rom(Memory* memory, const char* rom_file_path) {

@@ -15,6 +15,7 @@ typedef struct {
     int32_t columns;
     int32_t rows;
     bool pixels[64 * 32]; // 64x32 pixels (The original resolution of Chip-8)
+    bool redraw;
 } Display;
 
 typedef struct {
